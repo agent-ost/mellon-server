@@ -70,15 +70,15 @@ router.post('/event', (req, res) => {
 router.get('/commands', (req, res) => {
     console.log(req.headers)
     const command = queue.pop()
+    res.status(200)
+    res.flushHeaders()
     if(command) {
-        res.status(200)
-        res.send({command: command})
+        res.write(JSON.stringify({command: command}))
         res.end()
     } else {
         eventBarrier.once('command', (cmd) => {
             queue.pop()
-            res.status(200)
-            res.send({command: cmd})
+            res.write(JSON.stringify({command: cmd}))
             res.end()
         })
     }
